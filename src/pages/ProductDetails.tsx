@@ -1,27 +1,34 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Star, Check, ShoppingCart, Heart, TruckIcon } from 'lucide-react';
+import { Star, Check, ShoppingCart, Heart, TruckIcon, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getProductById } from '@/services/productService';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
+import TechInfo from '@/components/TechInfo';
 
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const product = getProductById(id || '');
   const [quantity, setQuantity] = useState(1);
+  const [isAdding, setIsAdding] = useState(false);
+  const [showTechInfo, setShowTechInfo] = useState(false);
   const { toast } = useToast();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   if (!product) {
     return (
       <div className="flex flex-col min-h-screen">
         <Header />
-        <main className="flex-grow container mx-auto px-4 py-12">
+        <main className="flex-grow container mx-auto px-4 py-24">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Product Not Found</h1>
-            <Link to="/" className="text-amazon-green">
+            <Link to="/" className="text-shine-purple">
               Return to homepage
             </Link>
           </div>
@@ -32,10 +39,15 @@ const ProductDetails: React.FC = () => {
   }
   
   const handleAddToCart = () => {
-    toast({
-      title: "Added to Cart",
-      description: `${product.title} has been added to your cart`,
-    });
+    setIsAdding(true);
+    
+    setTimeout(() => {
+      setIsAdding(false);
+      toast({
+        title: "Added to Cart",
+        description: `${product.title} has been added to your cart`,
+      });
+    }, 600);
   };
   
   const handleBuyNow = () => {
@@ -49,66 +61,78 @@ const ProductDetails: React.FC = () => {
     <div className="flex flex-col min-h-screen">
       <Header />
       
-      <main className="flex-grow container mx-auto px-4 py-8">
+      <main className="flex-grow container mx-auto px-4 pt-24 pb-8">
         {/* Breadcrumb */}
-        <div className="text-sm text-gray-500 mb-4">
-          <Link to="/" className="hover:text-amazon-green">Home</Link>
+        <div className="text-sm text-muted-foreground mb-6">
+          <Link to="/" className="hover:text-shine-purple">Home</Link>
           {' > '}
-          <Link to={`/category/${product.category}`} className="hover:text-amazon-green">
+          <Link to={`/category/${product.category}`} className="hover:text-shine-purple">
             {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
           </Link>
           {' > '}
-          <span className="text-gray-700">{product.title.substring(0, 20)}...</span>
+          <span className="text-foreground">{product.title.substring(0, 20)}...</span>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           {/* Product Image */}
-          <div className="overflow-hidden bg-white p-4 rounded-lg">
+          <div className="glass p-8 rounded-2xl overflow-hidden">
             <img 
               src={product.image} 
               alt={product.title}
               className="object-contain w-full h-80 md:h-96"
             />
+            <div className="flex justify-end mt-4">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-xs flex items-center"
+                onClick={() => setShowTechInfo(!showTechInfo)}
+              >
+                <Info className="h-3 w-3 mr-1" />
+                {showTechInfo ? 'Hide' : 'Show'} Tech Info
+              </Button>
+            </div>
+            {showTechInfo && <TechInfo componentName="Product Image" />}
           </div>
           
           {/* Product Details */}
           <div>
-            <h1 className="text-2xl font-bold mb-2">{product.title}</h1>
+            <h1 className="text-3xl font-bold mb-3">{product.title}</h1>
             
             {/* Ratings */}
             <div className="flex items-center mb-4">
-              <div className="flex text-amazon-orange">
+              <div className="flex text-shine-accent">
                 {[...Array(5)].map((_, i) => (
                   <Star 
                     key={i} 
                     size={16}
                     fill={i < Math.floor(product.rating.rate) ? "currentColor" : "none"}
-                    className={i < Math.floor(product.rating.rate) ? "text-amazon-orange" : "text-gray-300"}
+                    className={i < Math.floor(product.rating.rate) ? "text-shine-accent" : "text-gray-300"}
                   />
                 ))}
               </div>
-              <span className="text-sm text-blue-600 ml-2">
-                {product.rating.count} ratings
+              <span className="text-sm text-shine-purple ml-2">
+                {product.rating.rate} ({product.rating.count} ratings)
               </span>
             </div>
             
             {product.isBestSeller && (
-              <div className="inline-block bg-amazon-orange text-white text-sm px-2 py-1 rounded mb-4">
+              <div className="inline-block bg-shine-accent text-white text-sm px-3 py-1 rounded-full mb-4">
                 #1 Best Seller
               </div>
             )}
             
             {/* Price */}
-            <div className="border-t border-b py-4 mb-4">
+            <div className="glass p-6 rounded-xl mb-6">
               <div className="flex items-baseline">
-                <span className="text-sm text-gray-500 mr-1">₹</span>
-                <span className="text-3xl font-bold">{product.price.toLocaleString()}</span>
+                <span className="text-sm mr-1">₹</span>
+                <span className="text-4xl font-bold">{product.price.toLocaleString()}</span>
                 {product.originalPrice && (
                   <>
-                    <span className="text-sm text-gray-500 line-through ml-2">
+                    <span className="text-sm text-muted-foreground line-through ml-3">
                       ₹{product.originalPrice.toLocaleString()}
                     </span>
-                    <span className="text-sm text-amazon-green ml-2">
+                    <span className="text-sm bg-shine-accent/10 text-shine-accent rounded-full px-2 py-0.5 ml-2">
                       {Math.round((1 - product.price / product.originalPrice) * 100)}% off
                     </span>
                   </>
@@ -116,12 +140,12 @@ const ProductDetails: React.FC = () => {
               </div>
               
               {product.isPrime && (
-                <div className="mt-2 flex items-center">
-                  <span className="bg-blue-600 text-white text-xs px-1 py-0.5 rounded mr-2">
-                    Prime
+                <div className="mt-3 flex items-center">
+                  <span className="bg-shine-blue text-white text-xs px-2 py-0.5 rounded-full mr-2">
+                    Premium
                   </span>
                   <span className="text-sm">
-                    FREE Delivery
+                    FREE Express Delivery
                   </span>
                 </div>
               )}
@@ -129,11 +153,14 @@ const ProductDetails: React.FC = () => {
             
             {/* Features */}
             {product.features && (
-              <div className="mb-4">
+              <div className="mb-6">
                 <h3 className="font-bold mb-2">About this item:</h3>
-                <ul className="list-disc pl-5 space-y-1">
+                <ul className="space-y-2">
                   {product.features.map((feature, index) => (
-                    <li key={index} className="text-sm">{feature}</li>
+                    <li key={index} className="flex items-start">
+                      <Check className="h-4 w-4 text-shine-accent mt-0.5 mr-2 flex-shrink-0" />
+                      <span>{feature}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -141,37 +168,37 @@ const ProductDetails: React.FC = () => {
           </div>
           
           {/* Buy Box */}
-          <div className="border rounded-lg p-4 bg-white h-fit">
-            <div className="text-lg font-bold mb-2">₹{product.price.toLocaleString()}</div>
+          <div className="glass p-6 rounded-xl h-fit">
+            <div className="text-xl font-bold mb-3">₹{product.price.toLocaleString()}</div>
             
             {product.isPrime && (
               <div className="mb-4 flex items-center">
-                <span className="bg-blue-600 text-white text-xs px-1 py-0.5 rounded mr-2">
-                  Prime
+                <span className="bg-shine-blue text-white text-xs px-2 py-0.5 rounded-full mr-2">
+                  Premium
                 </span>
                 <span className="text-sm">
-                  FREE Delivery
+                  FREE Express Delivery
                 </span>
               </div>
             )}
             
             {product.deliveryDate && (
-              <div className="text-sm mb-4">
+              <div className="text-sm mb-4 font-medium">
                 {product.deliveryDate}
               </div>
             )}
             
-            <div className="text-lg text-amazon-green mb-2">
+            <div className="text-lg font-medium text-shine-purple mb-4">
               {product.inStock ? 'In Stock' : 'Currently unavailable'}
             </div>
             
             {/* Quantity Selector */}
-            <div className="mb-4">
-              <label className="block text-sm mb-1">Quantity:</label>
+            <div className="mb-6">
+              <label className="block text-sm mb-2">Quantity:</label>
               <select 
                 value={quantity}
                 onChange={(e) => setQuantity(parseInt(e.target.value))}
-                className="border rounded p-1 w-16"
+                className="border rounded-lg p-2 w-20"
               >
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                   <option key={num} value={num}>
@@ -182,27 +209,32 @@ const ProductDetails: React.FC = () => {
             </div>
             
             {/* Action Buttons */}
-            <div className="space-y-2">
+            <div className="space-y-3">
               <Button 
-                className="w-full bg-amazon-yellow hover:bg-amazon-orange text-black"
+                className="w-full bg-shine-purple hover:bg-shine-accent text-white"
                 onClick={handleAddToCart}
               >
-                <ShoppingCart className="h-4 w-4 mr-2" />
+                <ShoppingCart className={`h-4 w-4 mr-2 ${isAdding ? 'animate-cart-bounce' : ''}`} />
                 Add to Cart
               </Button>
               
               <Button 
-                className="w-full bg-amazon-orange hover:brightness-105 text-white"
+                className="w-full shine-button animate-shine"
                 onClick={handleBuyNow}
               >
                 Buy Now
               </Button>
               
-              <div className="pt-2 border-t mt-2">
+              <Button variant="outline" className="w-full mt-2">
+                <Heart className="h-4 w-4 mr-2" />
+                Add to Wishlist
+              </Button>
+              
+              <div className="pt-4 border-t mt-2">
                 <div className="flex text-sm">
-                  <TruckIcon className="h-4 w-4 mr-2 text-gray-500" />
+                  <TruckIcon className="h-4 w-4 mr-2 text-muted-foreground" />
                   <div>
-                    <Link to="#" className="text-blue-600">
+                    <Link to="#" className="text-shine-purple hover:underline">
                       Deliver to India
                     </Link>
                   </div>
@@ -213,21 +245,21 @@ const ProductDetails: React.FC = () => {
         </div>
         
         {/* Product Description */}
-        <div className="mt-12">
-          <h2 className="text-xl font-bold mb-4">Product Description</h2>
-          <div className="text-gray-700">{product.description}</div>
+        <div className="glass p-6 rounded-xl mt-12">
+          <h2 className="text-2xl font-bold mb-6">Product Description</h2>
+          <div className="text-foreground">{product.description}</div>
         </div>
         
         {/* Product Specifications */}
         {product.specifications && (
-          <div className="mt-8">
-            <h2 className="text-xl font-bold mb-4">Product Specifications</h2>
+          <div className="glass p-6 rounded-xl mt-6">
+            <h2 className="text-2xl font-bold mb-6">Product Specifications</h2>
             <table className="w-full border-collapse">
               <tbody>
                 {Object.entries(product.specifications).map(([key, value]) => (
                   <tr key={key} className="border-b">
-                    <td className="py-2 pr-4 font-medium w-1/4">{key}</td>
-                    <td className="py-2">{value}</td>
+                    <td className="py-3 pr-4 font-medium w-1/4">{key}</td>
+                    <td className="py-3">{value}</td>
                   </tr>
                 ))}
               </tbody>
