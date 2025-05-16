@@ -36,9 +36,9 @@ const Footer: React.FC = () => {
               <li><Link to="/about" className="hover:text-shine-accent transition-colors">About Us</Link></li>
               <li><Link to="/careers" className="hover:text-shine-accent transition-colors">Careers</Link></li>
               <li><Link to="/press" className="hover:text-shine-accent transition-colors">Press Releases</Link></li>
-              <li><Link to="/cares" className="hover:text-shine-accent transition-colors">Shine Cares</Link></li>
+              <li><Link to="/cares" className="hover:text-shine-accent transition-colors">Shile Cares</Link></li>
               <li><Link to="/gift-cards" className="hover:text-shine-accent transition-colors">Gift a Smile</Link></li>
-              <li><Link to="/sustainability" className="hover:text-shine-accent transition-colors">Shine Science</Link></li>
+              <li><Link to="/sustainability" className="hover:text-shine-accent transition-colors">Shile Science</Link></li>
             </ul>
           </div>
           
@@ -57,9 +57,9 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="font-bold mb-4 text-xl text-shine-accent">Make Money with Us</h3>
             <ul className="space-y-3 text-sm text-gray-300">
-              <li><Link to="/sell" className="hover:text-shine-accent transition-colors">Sell on Shine</Link></li>
+              <li><Link to="/sell" className="hover:text-shine-accent transition-colors">Sell on Shile</Link></li>
               <li><Link to="/affiliate" className="hover:text-shine-accent transition-colors">Become an Affiliate</Link></li>
-              <li><Link to="/fulfilment" className="hover:text-shine-accent transition-colors">Fulfilment by Shine</Link></li>
+              <li><Link to="/fulfilment" className="hover:text-shine-accent transition-colors">Fulfilment by Shile</Link></li>
               <li><Link to="/advertise" className="hover:text-shine-accent transition-colors">Advertise Your Products</Link></li>
               <li><Link to="/publish" className="hover:text-shine-accent transition-colors">Self-Publish with Us</Link></li>
             </ul>
@@ -69,11 +69,11 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="font-bold mb-4 text-xl text-shine-accent">Let Us Help You</h3>
             <ul className="space-y-3 text-sm text-gray-300">
-              <li><Link to="/covid" className="hover:text-shine-accent transition-colors">COVID-19 and Shine</Link></li>
+              <li><Link to="/covid" className="hover:text-shine-accent transition-colors">COVID-19 and Shile</Link></li>
               <li><Link to="/account" className="hover:text-shine-accent transition-colors">Your Account</Link></li>
               <li><Link to="/returns" className="hover:text-shine-accent transition-colors">Returns Centre</Link></li>
               <li><Link to="/purchase-protection" className="hover:text-shine-accent transition-colors">100% Purchase Protection</Link></li>
-              <li><Link to="/app" className="hover:text-shine-accent transition-colors">Shine App Download</Link></li>
+              <li><Link to="/app" className="hover:text-shine-accent transition-colors">Shile App Download</Link></li>
               <li><Link to="/help" className="hover:text-shine-accent transition-colors">Help</Link></li>
             </ul>
           </div>
@@ -153,7 +153,7 @@ const Footer: React.FC = () => {
           {/* Copyright */}
           <div>
             <p className="text-xs text-gray-400">
-              &copy; 2025 Shine - Shop in no time. A <span className="font-medium text-shine-accent">Nowlite.com</span> venture
+              &copy; 2025 Shile - Shop in no time. A <span className="font-medium text-shine-accent">nowhile.com</span> venture
             </p>
           </div>
         </div>

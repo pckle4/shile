@@ -342,6 +342,134 @@ const products: Product[] = [
     isFulfilled: true,
     isBestSeller: true,
     isPrime: true
+  },
+  {
+    id: "9",
+    title: "Bose QuietComfort Earbuds II - True Wireless Noise Cancelling In-Ear Headphones",
+    price: 24900,
+    originalPrice: 29900,
+    description: "The world's best noise cancellation and deep, immersive sound in a truly wireless earbud. CustomTune technology automatically personalizes the audio and noise cancellation to fit your ears perfectly.",
+    category: "electronics",
+    image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f37?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80",
+    rating: {
+      rate: 4.7,
+      count: 1352
+    },
+    features: [
+      "World-class noise cancellation",
+      "CustomTune sound technology",
+      "Up to 6 hours battery life",
+      "Bluetooth 5.3 connectivity"
+    ],
+    specifications: {
+      "Brand": "Bose",
+      "Model": "QuietComfort Earbuds II",
+      "Color": "Triple Black",
+      "Connectivity": "Bluetooth 5.3",
+      "Battery Life": "6 hours (24 hours with case)",
+      "Weight": "6.24g per earbud"
+    },
+    inStock: true,
+    deliveryDate: "Get it by Tomorrow, 9 PM - FREE Delivery",
+    isFulfilled: true,
+    isBestSeller: true,
+    isPrime: true
+  },
+  {
+    id: "10",
+    title: "Instant Pot Duo 7-in-1 Electric Pressure Cooker",
+    price: 7995,
+    originalPrice: 9995,
+    description: "7-in-1 functionality: Pressure cooker, slow cooker, rice cooker, steamer, sauté pan, yogurt maker, and warmer. 13 customizable Smart Programs for pressure cooking ribs, soups, beans, rice, poultry, yogurt, desserts and more.",
+    category: "home",
+    image: "https://images.unsplash.com/photo-1585577009823-3ec04c66e3d5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80",
+    rating: {
+      rate: 4.7,
+      count: 32456
+    },
+    features: [
+      "7-in-1 appliance functionality",
+      "13 one-touch Smart Programs",
+      "10+ built-in safety features",
+      "Easy-seal lid automatically seals"
+    ],
+    specifications: {
+      "Brand": "Instant Pot",
+      "Model": "Duo 60",
+      "Capacity": "6 Quarts",
+      "Power": "1000 watts",
+      "Material": "Stainless Steel",
+      "Dimensions": "13.4 × 12.2 × 12.5 inches"
+    },
+    inStock: true,
+    deliveryDate: "Get it by Tomorrow, 9 PM - FREE Delivery",
+    isFulfilled: true,
+    isBestSeller: true,
+    isPrime: true
+  },
+  {
+    id: "11",
+    title: "ASUS ROG Strix G17 (2023) Gaming Laptop",
+    price: 149990,
+    originalPrice: 169990,
+    description: "Latest AMD Ryzen 9 7945HX Processor with NVIDIA GeForce RTX 4080 Graphics. 17.3-inch QHD 240Hz display with 3ms response time. MUX Switch + NVIDIA Advanced Optimus for maximum gaming performance.",
+    category: "electronics",
+    image: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80",
+    rating: {
+      rate: 4.8,
+      count: 325
+    },
+    features: [
+      "AMD Ryzen 9 7945HX Processor",
+      "NVIDIA GeForce RTX 4080 16GB GDDR6",
+      "32GB DDR5 RAM, 1TB PCIe 4.0 SSD",
+      "ROG Intelligent Cooling system"
+    ],
+    specifications: {
+      "Brand": "ASUS",
+      "Model": "ROG Strix G17 G713PV",
+      "Processor": "AMD Ryzen 9 7945HX",
+      "Graphics": "NVIDIA GeForce RTX 4080 16GB",
+      "RAM": "32GB DDR5-4800MHz",
+      "Storage": "1TB PCIe 4.0 NVMe SSD",
+      "Display": "17.3-inch QHD (2560x1440) 240Hz"
+    },
+    inStock: true,
+    deliveryDate: "Get it by Monday, 10 AM - FREE Delivery",
+    isFulfilled: true,
+    isPrime: true
+  },
+  {
+    id: "12",
+    title: "Nike Air Zoom Pegasus 39 Men's Running Shoes",
+    price: 8995,
+    originalPrice: 10995,
+    description: "The Nike Air Zoom Pegasus 39 offers a supportive sensation to help keep your feet contained, while responsive foam gives you an extra spring in your step. The result is a shoe designed to help you keep up the pace, mile after mile.",
+    category: "fashion",
+    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80",
+    rating: {
+      rate: 4.4,
+      count: 876
+    },
+    features: [
+      "Zoom Air units provide responsive cushioning",
+      "Engineered mesh upper provides breathability",
+      "Midfoot webbing system for a personalized fit",
+      "Waffle outsole for multi-surface traction"
+    ],
+    specifications: {
+      "Brand": "Nike",
+      "Model": "Air Zoom Pegasus 39",
+      "Department": "Men",
+      "Sole Material": "Rubber",
+      "Closure": "Lace-Up",
+      "Style": "Running Shoes"
+    },
+    inStock: true,
+    deliveryDate: "Get it by Tomorrow, 9 PM - FREE Delivery",
+    isFulfilled: true,
+    isBestSeller: false,
+    isPrime: true
   }
 ];
 

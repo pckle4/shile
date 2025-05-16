@@ -12,8 +12,9 @@ const Index: React.FC = () => {
   const allProducts = getAllProducts();
   
   // Get a sample of products to display in different sections
-  const dealsProducts = allProducts.filter(p => p.originalPrice && p.originalPrice > p.price).slice(0, 5);
-  const bestSellers = allProducts.filter(p => p.isBestSeller).slice(0, 5);
+  const dealsProducts = allProducts.filter(p => p.originalPrice && p.originalPrice > p.price).slice(0, 8);
+  const bestSellers = allProducts.filter(p => p.isBestSeller).slice(0, 8);
+  const newArrivals = allProducts.sort(() => Math.random() - 0.5).slice(0, 8); // Simulate new arrivals
   
   return (
     <div className="flex flex-col min-h-screen">
@@ -41,6 +42,11 @@ const Index: React.FC = () => {
           {/* Best Sellers */}
           <div className="mb-12">
             <ProductGrid products={bestSellers} title="Best Sellers" />
+          </div>
+
+          {/* New Arrivals */}
+          <div className="mb-12">
+            <ProductGrid products={newArrivals} title="New Arrivals" />
           </div>
         </div>
       </main>
