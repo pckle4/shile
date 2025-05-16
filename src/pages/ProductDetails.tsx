@@ -11,7 +11,8 @@ import TechInfo from '@/components/TechInfo';
 
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const product = getProductById(id || '');
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
   const [showTechInfo, setShowTechInfo] = useState(false);
@@ -19,7 +20,31 @@ const ProductDetails: React.FC = () => {
   
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+    
+    const fetchProduct = async () => {
+      if (id) {
+        const result = await getProductById(id);
+        setProduct(result);
+        setLoading(false);
+      }
+    };
+    
+    fetchProduct();
+  }, [id]);
+  
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-24">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Loading...</h1>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
   
   if (!product) {
     return (
@@ -247,7 +272,7 @@ const ProductDetails: React.FC = () => {
         {/* Product Description */}
         <div className="glass p-6 rounded-xl mt-12">
           <h2 className="text-2xl font-bold mb-6">Product Description</h2>
-          <div className="text-foreground">{product.description}</div>
+          <div className="text-foreground">{String(product.description)}</div>
         </div>
         
         {/* Product Specifications */}
@@ -259,7 +284,7 @@ const ProductDetails: React.FC = () => {
                 {Object.entries(product.specifications).map(([key, value]) => (
                   <tr key={key} className="border-b">
                     <td className="py-3 pr-4 font-medium w-1/4">{key}</td>
-                    <td className="py-3">{value}</td>
+                    <td className="py-3">{String(value)}</td>
                   </tr>
                 ))}
               </tbody>

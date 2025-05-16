@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Banner from '@/components/Banner';
@@ -8,13 +8,50 @@ import ProductGrid from '@/components/ProductGrid';
 import { getFeaturedProducts, getAllProducts } from '@/services/productService';
 
 const Index: React.FC = () => {
-  const featuredProducts = getFeaturedProducts();
-  const allProducts = getAllProducts();
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    // Get all products data
+    const loadProducts = () => {
+      const featured = getFeaturedProducts();
+      const all = getAllProducts();
+      
+      setFeaturedProducts(featured);
+      setAllProducts(all);
+      setLoading(false);
+    };
+    
+    loadProducts();
+  }, []);
   
   // Get a sample of products to display in different sections
-  const dealsProducts = allProducts.filter(p => p.originalPrice && p.originalPrice > p.price).slice(0, 8);
-  const bestSellers = allProducts.filter(p => p.isBestSeller).slice(0, 8);
-  const newArrivals = allProducts.sort(() => Math.random() - 0.5).slice(0, 8); // Simulate new arrivals
+  const dealsProducts = allProducts
+    .filter(p => p.originalPrice && p.originalPrice > p.price)
+    .slice(0, 8);
+    
+  const bestSellers = allProducts
+    .filter(p => p.isBestSeller)
+    .slice(0, 8);
+    
+  const newArrivals = [...allProducts]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 8); // Simulate new arrivals
+  
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-24">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Loading...</h1>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
   
   return (
     <div className="flex flex-col min-h-screen">
