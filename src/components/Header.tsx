@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, User, MapPin, Menu, X, Code } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import MegaMenu from './MegaMenu';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
-import { getCartItems } from '@/services/productService';
+import { getCartItems, getAllProducts } from '@/services/productService';
 
 const Header: React.FC = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -16,21 +16,69 @@ const Header: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [cartItems, setCartItems] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [products, setProducts] = useState([]);
+  const [showResults, setShowResults] = useState(false);
   const isMobile = useIsMobile();
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
     
-    // Get cart items count
-    const items = getCartItems();
-    setCartItems(items.length);
+    // Get cart items count and update it
+    const updateCartItems = () => {
+      const items = getCartItems();
+      setCartItems(items.length);
+    };
     
+    // Load all products for search
+    const loadProducts = async () => {
+      const allProducts = await getAllProducts();
+      setProducts(allProducts);
+    };
+    
+    loadProducts();
+    updateCartItems();
+    
+    // Setup event listeners
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('cartUpdated', updateCartItems);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('cartUpdated', updateCartItems);
+    };
   }, []);
+  
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    setShowResults(query.length > 0);
+  };
+  
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      setShowResults(false);
+      navigate(`/category/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+  
+  const handleProductClick = (productId) => {
+    setSearchQuery('');
+    setShowResults(false);
+    navigate(`/product/${productId}`);
+  };
+  
+  const filteredProducts = searchQuery
+    ? products.filter(product => 
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (product.description && product.description.toLowerCase().includes(searchQuery.toLowerCase()))
+      ).slice(0, 5)
+    : [];
   
   return (
     <header className={`w-full fixed top-0 left-0 z-40 transition-all duration-300 ${scrolled ? 'bg-shine-purple/90 py-2 shadow-md' : 'bg-gradient-to-r from-shine-purple/80 via-shine-blue/80 to-shine-purple/80 py-4'}`}>
@@ -65,21 +113,51 @@ const Header: React.FC = () => {
           
           {/* Search */}
           <div className={`flex-1 max-w-md mx-4 relative ${isSearchFocused ? 'z-20' : ''}`}>
-            <div className="flex">
+            <form onSubmit={handleSearchSubmit} className="flex">
               <Input
                 type="text"
                 placeholder="Search products..."
+                value={searchQuery}
+                onChange={handleSearch}
                 className="rounded-full pr-12 border-white/30 focus:border-white bg-white/20 placeholder:text-white/70 text-white"
                 onFocus={() => setIsSearchFocused(true)}
-                onBlur={() => setIsSearchFocused(false)}
+                onBlur={() => setTimeout(() => setShowResults(false), 200)}
               />
               <Button 
+                type="submit"
                 className="absolute right-0 rounded-full bg-shine-accent text-white hover:bg-shine-accent/80 hover:scale-105 transition-all duration-300" 
                 size="icon"
               >
                 <Search className="h-4 w-4" />
               </Button>
-            </div>
+            </form>
+            
+            {/* Search Results Dropdown */}
+            {showResults && filteredProducts.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg z-30 max-h-60 overflow-auto">
+                {filteredProducts.map(product => (
+                  <div 
+                    key={product.id}
+                    className="p-2 hover:bg-gray-100 cursor-pointer flex items-center"
+                    onClick={() => handleProductClick(product.id)}
+                  >
+                    {product.image && (
+                      <img src={product.image} alt={product.name} className="w-10 h-10 object-cover mr-2" />
+                    )}
+                    <div>
+                      <div className="font-medium text-gray-800">{product.name}</div>
+                      <div className="text-sm text-gray-500">${product.price}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {showResults && searchQuery && filteredProducts.length === 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg z-30 p-3 text-center">
+                No products found matching "{searchQuery}"
+              </div>
+            )}
           </div>
           
           {/* Tech Stack Link */}
