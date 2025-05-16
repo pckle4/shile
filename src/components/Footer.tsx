@@ -1,9 +1,9 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUp, Github as GithubIcon, Code, GitMerge as GitlabIcon, 
-         Atom as ReactIcon, Database, FileJson as Html, FileCode as Css, 
-         Palette as Tailwind } from 'lucide-react';
+import { ArrowUp, Github, Code, GitMerge, 
+         Atom, Database, FileJson, FileCode, 
+         Palette } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const scrollToTop = () => {
@@ -27,7 +27,7 @@ const Footer: React.FC = () => {
       </div>
       
       {/* Main Footer Links */}
-      <div className="bg-shine-dark text-white py-16">
+      <div className="bg-[#121212] text-white py-16">
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Get to Know Us */}
           <div>
@@ -81,7 +81,7 @@ const Footer: React.FC = () => {
       </div>
       
       {/* Tech Stack Section */}
-      <div className="bg-shine-dark/80 py-6 text-center">
+      <div className="bg-[#0a0a0a] py-6 text-center">
         <div className="container mx-auto px-4">
           <h3 className="text-white font-bold mb-4 flex items-center justify-center">
             <Code className="mr-2 h-5 w-5" /> 
@@ -89,19 +89,19 @@ const Footer: React.FC = () => {
           </h3>
           <div className="flex justify-center space-x-6 flex-wrap">
             <div className="flex items-center text-white/70 hover:text-white transition-colors">
-              <ReactIcon className="h-5 w-5 mr-1" />
+              <Atom className="h-5 w-5 mr-1" />
               <span className="text-sm">React</span>
             </div>
             <div className="flex items-center text-white/70 hover:text-white transition-colors">
-              <Tailwind className="h-5 w-5 mr-1" />
+              <Palette className="h-5 w-5 mr-1" />
               <span className="text-sm">Tailwind</span>
             </div>
             <div className="flex items-center text-white/70 hover:text-white transition-colors">
-              <Html className="h-5 w-5 mr-1" />
+              <FileJson className="h-5 w-5 mr-1" />
               <span className="text-sm">HTML5</span>
             </div>
             <div className="flex items-center text-white/70 hover:text-white transition-colors">
-              <Css className="h-5 w-5 mr-1" />
+              <FileCode className="h-5 w-5 mr-1" />
               <span className="text-sm">CSS3</span>
             </div>
             <div className="flex items-center text-white/70 hover:text-white transition-colors">
@@ -115,11 +115,24 @@ const Footer: React.FC = () => {
         </div>
       </div>
       
+      {/* Educational Disclaimer */}
+      <div className="bg-[#050505] text-center py-4">
+        <div className="container mx-auto px-4">
+          <div className="text-sm text-white/50 mb-2">
+            For Educational Purposes Only — Not For Commercial Use
+          </div>
+          <div className="text-xs text-white/30 max-w-xl mx-auto">
+            This project is created solely for educational and learning purposes.
+            All product images, descriptions, and brand names are simulated and not intended for actual commerce.
+          </div>
+        </div>
+      </div>
+      
       {/* Bottom Footer */}
-      <div className="bg-shine-dark text-center py-8">
+      <div className="bg-black text-center py-8">
         <div className="container mx-auto px-4">
           {/* Language Selector */}
-          <div className="inline-block border border-gray-600 rounded-full px-4 py-1.5 mb-6">
+          <div className="inline-block border border-gray-800 rounded-full px-4 py-1.5 mb-6">
             <select className="bg-transparent outline-none text-white">
               <option>English</option>
               <option>हिन्दी - Hindi</option>
@@ -132,7 +145,7 @@ const Footer: React.FC = () => {
           
           {/* Countries */}
           <div className="mb-6">
-            <ul className="flex flex-wrap justify-center gap-4 text-xs text-gray-400">
+            <ul className="flex flex-wrap justify-center gap-4 text-xs text-gray-500">
               <li><Link to="/au" className="hover:text-shine-accent transition-colors">Australia</Link></li>
               <li><Link to="/br" className="hover:text-shine-accent transition-colors">Brazil</Link></li>
               <li><Link to="/ca" className="hover:text-shine-accent transition-colors">Canada</Link></li>
@@ -152,8 +165,11 @@ const Footer: React.FC = () => {
           
           {/* Copyright */}
           <div>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-gray-500">
               &copy; 2025 Shile - Shop in no time. A <span className="font-medium text-shine-accent">nowhile.com</span> venture
+            </p>
+            <p className="text-xs text-gray-600 mt-1">
+              This is an educational project and not intended for commercial purposes
             </p>
           </div>
         </div>

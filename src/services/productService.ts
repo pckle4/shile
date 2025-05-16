@@ -1,4 +1,3 @@
-
 export interface Product {
   id: string;
   title: string;
@@ -505,4 +504,15 @@ export const searchProducts = (query: string): Product[] => {
     product.title.toLowerCase().includes(lowercaseQuery) || 
     product.description.toLowerCase().includes(lowercaseQuery)
   );
+};
+
+// Add this new function for cart items
+export const getCartItems = () => {
+  // In a real app, this would come from a state management solution or localStorage
+  // For now, we'll return a mock cart with 3 items
+  return [
+    { id: 1, name: "Smartphone XS", price: 899, quantity: 1 },
+    { id: 5, name: "Wireless Headphones", price: 199, quantity: 1 },
+    { id: 8, name: "Smart Watch Pro", price: 299, quantity: 1 }
+  ];
 };

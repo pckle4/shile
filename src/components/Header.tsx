@@ -8,11 +8,14 @@ import { Input } from '@/components/ui/input';
 import MegaMenu from './MegaMenu';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
+import { getCartItems } from '@/services/productService';
 
 const Header: React.FC = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [cartItems, setCartItems] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
   const isMobile = useIsMobile();
   const { toast } = useToast();
   
@@ -21,33 +24,42 @@ const Header: React.FC = () => {
       setScrolled(window.scrollY > 20);
     };
     
+    // Get cart items count
+    const items = getCartItems();
+    setCartItems(items.length);
+    
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
   return (
-    <header className={`w-full fixed top-0 left-0 z-40 transition-all duration-300 ${scrolled ? 'glass py-2 shadow-md' : 'bg-transparent py-4'}`}>
+    <header className={`w-full fixed top-0 left-0 z-40 transition-all duration-300 ${scrolled ? 'bg-shine-purple/90 py-2 shadow-md' : 'bg-gradient-to-r from-shine-purple/80 via-shine-blue/80 to-shine-purple/80 py-4'}`}>
       {/* Top Navigation Bar */}
       <div className="container mx-auto">
         <div className="flex items-center justify-between px-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <span className="text-2xl font-bold shine-text">Shine</span>
+          <Link 
+            to="/" 
+            className="flex items-center"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            <span className={`text-2xl font-bold ${isHovered ? 'shine-text animate-pulse' : 'text-white'} transition-all duration-300`}>Shile</span>
           </Link>
           
           {/* Slogan - Only show on desktop and when not scrolled */}
           {!isMobile && !scrolled && (
-            <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 text-sm text-center font-medium text-muted-foreground">
+            <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 text-sm text-center font-medium text-white">
               Shop in no time <span className="text-xs block">A Nowlite.com venture</span>
             </div>
           )}
           
           {/* Delivery Location */}
           <div className="hidden md:flex items-center mr-4">
-            <MapPin className="h-5 w-5 mr-1 text-shine-purple" />
+            <MapPin className="h-5 w-5 mr-1 text-white animate-pulse" />
             <div className="text-sm">
-              <div className="text-muted-foreground">Deliver to</div>
-              <div className="font-bold">India</div>
+              <div className="text-white/90">Deliver to</div>
+              <div className="font-bold text-white">India</div>
             </div>
           </div>
           
@@ -57,12 +69,12 @@ const Header: React.FC = () => {
               <Input
                 type="text"
                 placeholder="Search products..."
-                className="rounded-full pr-12 border-shine-purple/20 focus:border-shine-purple"
+                className="rounded-full pr-12 border-white/30 focus:border-white bg-white/20 placeholder:text-white/70 text-white"
                 onFocus={() => setIsSearchFocused(true)}
                 onBlur={() => setIsSearchFocused(false)}
               />
               <Button 
-                className="absolute right-0 rounded-full bg-shine-purple text-white hover:bg-shine-accent" 
+                className="absolute right-0 rounded-full bg-shine-accent text-white hover:bg-shine-accent/80 hover:scale-105 transition-all duration-300" 
                 size="icon"
               >
                 <Search className="h-4 w-4" />
@@ -71,24 +83,31 @@ const Header: React.FC = () => {
           </div>
           
           {/* Tech Stack Link */}
-          <Link to="/tech" className="hidden md:flex items-center text-sm mr-3 hover:text-shine-purple transition-colors">
+          <Link to="/tech" className="hidden md:flex items-center text-sm mr-3 hover:text-shine-accent transition-colors text-white hover:scale-105">
             <Code className="h-4 w-4 mr-1" />
             <span>Tech Stack</span>
           </Link>
           
           {/* Account */}
           <div className="hidden md:block">
-            <Link to="/account" className="text-sm hover:text-shine-purple transition-colors">
-              <div className="text-muted-foreground text-xs">Hello, Sign in</div>
+            <Link to="/account" className="text-sm text-white hover:text-shine-accent transition-all duration-300 hover:scale-105">
+              <div className="text-white/80 text-xs">Hello, Sign in</div>
               <div className="font-medium">Account</div>
             </Link>
           </div>
           
           {/* Cart */}
-          <Link to="/cart" className="flex items-center ml-4 hover:text-shine-purple transition-colors">
-            <div className="relative">
+          <Link 
+            to="/cart" 
+            className="flex items-center ml-4 text-white hover:text-shine-accent transition-colors relative group"
+            onMouseEnter={() => toast({
+              title: "Your Shopping Cart",
+              description: cartItems > 0 ? `You have ${cartItems} items in your cart` : "Your cart is empty",
+            })}
+          >
+            <div className="relative transition-transform group-hover:scale-110 duration-300">
               <ShoppingCart className="h-6 w-6" />
-              <Badge className="absolute -top-2 -right-2 bg-shine-accent text-white">3</Badge>
+              <Badge className="absolute -top-2 -right-2 bg-shine-accent text-white group-hover:animate-pulse">{cartItems}</Badge>
             </div>
             <span className="hidden md:inline ml-1 font-medium">Cart</span>
           </Link>
@@ -98,7 +117,7 @@ const Header: React.FC = () => {
             <Button 
               variant="ghost" 
               size="icon"
-              className="ml-2 text-foreground"
+              className="ml-2 text-white hover:bg-white/10"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -112,7 +131,7 @@ const Header: React.FC = () => {
         <nav className="flex items-center px-4 overflow-x-auto scrollbar-hide">
           {!isMobile ? (
             <div className="flex space-x-1 w-full justify-center">
-              <Button variant="ghost" className="text-sm flex items-center rounded-full">
+              <Button variant="ghost" className="text-sm flex items-center rounded-full text-white hover:bg-white/10">
                 <Menu className="h-4 w-4 mr-1" />
                 All
               </Button>
@@ -120,19 +139,19 @@ const Header: React.FC = () => {
             </div>
           ) : (
             <div className="overflow-x-auto flex py-2">
-              <Button variant="ghost" className="text-sm whitespace-nowrap rounded-full">
+              <Button variant="ghost" className="text-sm whitespace-nowrap rounded-full text-white hover:bg-white/10">
                 Today's Deals
               </Button>
-              <Button variant="ghost" className="text-sm whitespace-nowrap rounded-full">
+              <Button variant="ghost" className="text-sm whitespace-nowrap rounded-full text-white hover:bg-white/10">
                 Best Sellers
               </Button>
-              <Button variant="ghost" className="text-sm whitespace-nowrap rounded-full">
+              <Button variant="ghost" className="text-sm whitespace-nowrap rounded-full text-white hover:bg-white/10">
                 Electronics
               </Button>
-              <Button variant="ghost" className="text-sm whitespace-nowrap rounded-full">
+              <Button variant="ghost" className="text-sm whitespace-nowrap rounded-full text-white hover:bg-white/10">
                 Fashion
               </Button>
-              <Button variant="ghost" className="text-sm whitespace-nowrap rounded-full">
+              <Button variant="ghost" className="text-sm whitespace-nowrap rounded-full text-white hover:bg-white/10">
                 Books
               </Button>
             </div>
@@ -143,8 +162,8 @@ const Header: React.FC = () => {
       {/* Mobile Menu (Shown when menu button is clicked) */}
       {isMobile && isMenuOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
-          <div className="glass h-full w-4/5 max-w-xs overflow-y-auto animate-fade-in">
-            <div className="bg-shine-purple text-white p-4 flex items-center justify-between">
+          <div className="bg-shine-purple h-full w-4/5 max-w-xs overflow-y-auto animate-fade-in">
+            <div className="bg-shine-accent text-white p-4 flex items-center justify-between">
               <div className="flex items-center">
                 <User className="h-5 w-5 mr-2" />
                 <span className="text-lg font-bold">Hello, Sign In</span>
@@ -158,23 +177,23 @@ const Header: React.FC = () => {
                 <X className="h-5 w-5" />
               </Button>
             </div>
-            <div className="p-4 border-b">
-              <h2 className="font-bold text-lg mb-2">Shop By Department</h2>
-              <ul className="space-y-2">
-                <li><Link to="/category/electronics" className="block py-1 hover:text-shine-purple transition-colors">Electronics</Link></li>
-                <li><Link to="/category/fashion" className="block py-1 hover:text-shine-purple transition-colors">Fashion</Link></li>
-                <li><Link to="/category/home" className="block py-1 hover:text-shine-purple transition-colors">Home & Kitchen</Link></li>
-                <li><Link to="/category/books" className="block py-1 hover:text-shine-purple transition-colors">Books</Link></li>
-                <li><Link to="/category/beauty" className="block py-1 hover:text-shine-purple transition-colors">Beauty & Personal Care</Link></li>
+            <div className="p-4 border-b border-white/10">
+              <h2 className="font-bold text-lg mb-2 text-white">Shop By Department</h2>
+              <ul className="space-y-2 text-white/90">
+                <li><Link to="/category/electronics" className="block py-1 hover:text-shine-accent transition-colors">Electronics</Link></li>
+                <li><Link to="/category/fashion" className="block py-1 hover:text-shine-accent transition-colors">Fashion</Link></li>
+                <li><Link to="/category/home" className="block py-1 hover:text-shine-accent transition-colors">Home & Kitchen</Link></li>
+                <li><Link to="/category/books" className="block py-1 hover:text-shine-accent transition-colors">Books</Link></li>
+                <li><Link to="/category/beauty" className="block py-1 hover:text-shine-accent transition-colors">Beauty & Personal Care</Link></li>
               </ul>
             </div>
-            <div className="p-4 border-b">
-              <h2 className="font-bold text-lg mb-2">Help & Settings</h2>
-              <ul className="space-y-2">
-                <li><Link to="/account" className="block py-1 hover:text-shine-purple transition-colors">Your Account</Link></li>
-                <li><Link to="/orders" className="block py-1 hover:text-shine-purple transition-colors">Orders</Link></li>
-                <li><Link to="/tech" className="block py-1 hover:text-shine-purple transition-colors">Tech Stack</Link></li>
-                <li><Link to="/sign-in" className="block py-1 hover:text-shine-purple transition-colors">Sign In</Link></li>
+            <div className="p-4 border-b border-white/10">
+              <h2 className="font-bold text-lg mb-2 text-white">Help & Settings</h2>
+              <ul className="space-y-2 text-white/90">
+                <li><Link to="/account" className="block py-1 hover:text-shine-accent transition-colors">Your Account</Link></li>
+                <li><Link to="/orders" className="block py-1 hover:text-shine-accent transition-colors">Orders</Link></li>
+                <li><Link to="/tech" className="block py-1 hover:text-shine-accent transition-colors">Tech Stack</Link></li>
+                <li><Link to="/sign-in" className="block py-1 hover:text-shine-accent transition-colors">Sign In</Link></li>
               </ul>
             </div>
           </div>
