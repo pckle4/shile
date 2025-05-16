@@ -1,4 +1,3 @@
-
 // Define Product type to be used throughout the application
 export interface Product {
   id: string;
@@ -215,6 +214,28 @@ const generateRandomProducts = (count: number) => {
     const originalPrice = Math.random() > 0.6 ? Math.floor(Math.random() * 100) + 40 : undefined;
     const price = originalPrice ? originalPrice * (Math.random() * 0.3 + 0.6) : Math.floor(Math.random() * 100) + 20;
     
+    // Image selection based on category for better reliability
+    let imageUrl;
+    switch (category) {
+      case 'electronics':
+        imageUrl = 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&h=400&fit=crop';
+        break;
+      case 'fashion':
+        imageUrl = 'https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=400&h=400&fit=crop';
+        break;
+      case 'home':
+        imageUrl = 'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=400&h=400&fit=crop';
+        break;
+      case 'books':
+        imageUrl = 'https://images.unsplash.com/photo-1589998059171-988d887df646?w=400&h=400&fit=crop';
+        break;
+      case 'beauty':
+        imageUrl = 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop';
+        break;
+      default:
+        imageUrl = 'https://images.unsplash.com/photo-1493723843671-1d655e66ac1c?w=400&h=400&fit=crop';
+    }
+    
     const product: Product = {
       id: id,
       name: `Random Product ${i + 1}`,
@@ -222,7 +243,7 @@ const generateRandomProducts = (count: number) => {
       description: `A random product in the ${category} category.`,
       price: Math.floor(price),
       originalPrice: originalPrice ? Math.floor(originalPrice) : undefined,
-      image: `https://source.unsplash.com/200x200/?${category}`,
+      image: imageUrl,
       category: category,
       subcategory: subcategory,
       rating: {

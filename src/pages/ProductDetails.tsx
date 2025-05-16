@@ -1,13 +1,13 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Star, Check, ShoppingCart, Heart, TruckIcon, Info } from 'lucide-react';
+import { Star, Check, ShoppingCart, Heart, TruckIcon, Info, ImageOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getProductById } from '@/services/productService';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
 import TechInfo from '@/components/TechInfo';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -16,6 +16,8 @@ const ProductDetails: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
   const [showTechInfo, setShowTechInfo] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const { toast } = useToast();
   
   useEffect(() => {
@@ -81,6 +83,14 @@ const ProductDetails: React.FC = () => {
       description: "This feature is not implemented yet.",
     });
   };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
   
   return (
     <div className="flex flex-col min-h-screen">
@@ -101,11 +111,23 @@ const ProductDetails: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           {/* Product Image */}
           <div className="glass p-8 rounded-2xl overflow-hidden">
-            <img 
-              src={product.image} 
-              alt={product.title}
-              className="object-contain w-full h-80 md:h-96"
-            />
+            <div className="relative w-full h-80 md:h-96">
+              {!imageLoaded && !imageError && <Skeleton className="w-full h-full absolute" />}
+              
+              {imageError ? (
+                <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
+                  <ImageOff className="h-16 w-16 text-gray-400" />
+                </div>
+              ) : (
+                <img 
+                  src={product.image} 
+                  alt={product.title}
+                  className={`object-contain w-full h-full ${imageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+                  onLoad={handleImageLoad}
+                  onError={handleImageError}
+                />
+              )}
+            </div>
             <div className="flex justify-end mt-4">
               <Button 
                 variant="ghost" 

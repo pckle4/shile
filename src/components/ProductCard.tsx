@@ -1,11 +1,12 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Star, ShoppingCart } from 'lucide-react';
+import { Star, ShoppingCart, ImageOff } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Product } from '@/services/productService';
 import { useToast } from '@/hooks/use-toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface ProductCardProps {
   product: Product;
@@ -14,6 +15,8 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { toast } = useToast();
   const [isAdding, setIsAdding] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   
   const discountPercentage = product.originalPrice 
     ? Math.round((1 - product.price / product.originalPrice) * 100) 
@@ -31,6 +34,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         description: `${product.title} has been added to your cart`,
       });
     }, 600);
+  };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
   };
   
   return (
@@ -52,11 +63,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         
         {/* Product Image */}
         <div className="relative aspect-square w-full overflow-hidden mb-4 bg-white/50 rounded-lg">
-          <img 
-            src={product.image} 
-            alt={product.title}
-            className="object-contain w-full h-full p-2 group-hover:scale-110 transition-transform duration-500"
-          />
+          {!imageLoaded && !imageError && <Skeleton className="w-full h-full absolute" />}
+          {imageError ? (
+            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+              <ImageOff className="h-12 w-12 text-gray-400" />
+            </div>
+          ) : (
+            <img 
+              src={product.image} 
+              alt={product.title}
+              className={`object-contain w-full h-full p-2 group-hover:scale-110 transition-transform duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+            />
+          )}
         </div>
         
         {/* Product Details */}
