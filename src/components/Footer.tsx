@@ -1,7 +1,9 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUp, GithubIcon, Code, GitlabIcon, React as ReactIcon, Database, Html, Css, Tailwind } from 'lucide-react';
+import { ArrowUp, Github as GithubIcon, Code, GitMerge as GitlabIcon, 
+         Atom as ReactIcon, Database, FileJson as Html, FileCode as Css, 
+         Palette as Tailwind } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const scrollToTop = () => {

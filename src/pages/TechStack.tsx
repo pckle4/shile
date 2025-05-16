@@ -5,15 +5,15 @@ import Footer from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Code, 
-  ReactIcon, 
-  Tailwind, 
-  TypeScript, 
+  Atom as ReactIcon, 
+  Palette as Tailwind, 
+  FileCode as TypeScript, 
   Database, 
   Layers, 
-  GitlabIcon, 
-  GithubIcon,
-  Css,
-  Html,
+  GitMerge as GitlabIcon, 
+  Github as GithubIcon,
+  FileCode as Css,
+  FileJson as Html,
   LayoutGrid
 } from 'lucide-react';
 
