@@ -1,14 +1,22 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Search, ShoppingCart, User, MapPin, Menu, X, Code } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Search, ShoppingCart, User, MapPin, Menu, X, Code, Heart, LogOut } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import MegaMenu from './MegaMenu';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
 import { getCartItems, getAllProducts } from '@/services/productService';
+import { isAuthenticated, logout, getCurrentUser } from '@/services/authService';
 
 const Header: React.FC = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -19,9 +27,11 @@ const Header: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [products, setProducts] = useState([]);
   const [showResults, setShowResults] = useState(false);
+  const [isAuthenticated_, setIsAuthenticated] = useState(false);
   const isMobile = useIsMobile();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -40,18 +50,27 @@ const Header: React.FC = () => {
       setProducts(allProducts);
     };
     
+    // Check authentication status
+    const checkAuth = () => {
+      setIsAuthenticated(isAuthenticated());
+    };
+    
     loadProducts();
     updateCartItems();
+    checkAuth();
     
     // Setup event listeners
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('cartUpdated', updateCartItems);
     
+    // Check authentication on route change
+    checkAuth();
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('cartUpdated', updateCartItems);
     };
-  }, []);
+  }, [location.pathname]);
   
   const handleSearch = (e) => {
     const query = e.target.value;
@@ -73,11 +92,26 @@ const Header: React.FC = () => {
     navigate(`/product/${productId}`);
   };
   
+  const handleLogout = () => {
+    logout();
+    setIsAuthenticated(false);
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out",
+    });
+    
+    // Navigate to home if on account page
+    if (location.pathname === '/account') {
+      navigate('/');
+    }
+  };
+  
   const filteredProducts = searchQuery
     ? products.filter(product => 
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (product.description && product.description.toLowerCase().includes(searchQuery.toLowerCase()))
-      ).slice(0, 5)
+        product.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      ).slice(0, 6)
     : [];
   
   return (
@@ -134,7 +168,7 @@ const Header: React.FC = () => {
             
             {/* Search Results Dropdown */}
             {showResults && filteredProducts.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg z-30 max-h-60 overflow-auto">
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-md shadow-lg z-30 max-h-72 overflow-auto">
                 {filteredProducts.map(product => (
                   <div 
                     key={product.id}
@@ -142,11 +176,11 @@ const Header: React.FC = () => {
                     onClick={() => handleProductClick(product.id)}
                   >
                     {product.image && (
-                      <img src={product.image} alt={product.name} className="w-10 h-10 object-cover mr-2" />
+                      <img src={product.image} alt={product.title} className="w-10 h-10 object-cover mr-2" />
                     )}
                     <div>
-                      <div className="font-medium text-gray-800">{product.name}</div>
-                      <div className="text-sm text-gray-500">${product.price}</div>
+                      <div className="font-medium text-gray-800 line-clamp-1">{product.title}</div>
+                      <div className="text-sm text-gray-500">₹{product.price.toLocaleString()} • {product.category}</div>
                     </div>
                   </div>
                 ))}
@@ -168,10 +202,39 @@ const Header: React.FC = () => {
           
           {/* Account */}
           <div className="hidden md:block">
-            <Link to="/account" className="text-sm text-white hover:text-shine-accent transition-all duration-300 hover:scale-105">
-              <div className="text-white/80 text-xs">Hello, Sign in</div>
-              <div className="font-medium">Account</div>
-            </Link>
+            {isAuthenticated_ ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="text-white hover:bg-white/20">
+                    <User className="h-5 w-5 mr-2" />
+                    <div className="text-left">
+                      <div className="font-medium">Account</div>
+                      <div className="text-white/80 text-xs">{getCurrentUser()?.username}</div>
+                    </div>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem onClick={() => navigate('/account')}>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>My Account</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/account')}>
+                    <Heart className="mr-2 h-4 w-4" />
+                    <span>Liked Products</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link to="/login" className="text-sm text-white hover:text-shine-accent transition-all duration-300 hover:scale-105">
+                <div className="text-white/80 text-xs">Hello, Sign in</div>
+                <div className="font-medium">Account</div>
+              </Link>
+            )}
           </div>
           
           {/* Cart */}
@@ -242,10 +305,17 @@ const Header: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
           <div className="bg-shine-purple h-full w-4/5 max-w-xs overflow-y-auto animate-fade-in">
             <div className="bg-shine-accent text-white p-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <User className="h-5 w-5 mr-2" />
-                <span className="text-lg font-bold">Hello, Sign In</span>
-              </div>
+              {isAuthenticated_ ? (
+                <div className="flex items-center">
+                  <User className="h-5 w-5 mr-2" />
+                  <span className="text-lg font-bold">{getCurrentUser()?.username}</span>
+                </div>
+              ) : (
+                <div className="flex items-center">
+                  <User className="h-5 w-5 mr-2" />
+                  <span className="text-lg font-bold">Hello, Sign In</span>
+                </div>
+              )}
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -255,23 +325,65 @@ const Header: React.FC = () => {
                 <X className="h-5 w-5" />
               </Button>
             </div>
+            
+            {isAuthenticated_ && (
+              <div className="p-4 border-b border-white/10">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start text-white border-white/20"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    navigate('/account');
+                  }}
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  My Account
+                </Button>
+              </div>
+            )}
+            
             <div className="p-4 border-b border-white/10">
               <h2 className="font-bold text-lg mb-2 text-white">Shop By Department</h2>
               <ul className="space-y-2 text-white/90">
-                <li><Link to="/category/electronics" className="block py-1 hover:text-shine-accent transition-colors">Electronics</Link></li>
-                <li><Link to="/category/fashion" className="block py-1 hover:text-shine-accent transition-colors">Fashion</Link></li>
-                <li><Link to="/category/home" className="block py-1 hover:text-shine-accent transition-colors">Home & Kitchen</Link></li>
-                <li><Link to="/category/books" className="block py-1 hover:text-shine-accent transition-colors">Books</Link></li>
-                <li><Link to="/category/beauty" className="block py-1 hover:text-shine-accent transition-colors">Beauty & Personal Care</Link></li>
+                <li><Link to="/category/electronics" className="block py-1 hover:text-shine-accent transition-colors" onClick={() => setIsMenuOpen(false)}>Electronics</Link></li>
+                <li><Link to="/category/fashion" className="block py-1 hover:text-shine-accent transition-colors" onClick={() => setIsMenuOpen(false)}>Fashion</Link></li>
+                <li><Link to="/category/home" className="block py-1 hover:text-shine-accent transition-colors" onClick={() => setIsMenuOpen(false)}>Home & Kitchen</Link></li>
+                <li><Link to="/category/books" className="block py-1 hover:text-shine-accent transition-colors" onClick={() => setIsMenuOpen(false)}>Books</Link></li>
+                <li><Link to="/category/beauty" className="block py-1 hover:text-shine-accent transition-colors" onClick={() => setIsMenuOpen(false)}>Beauty & Personal Care</Link></li>
               </ul>
             </div>
             <div className="p-4 border-b border-white/10">
               <h2 className="font-bold text-lg mb-2 text-white">Help & Settings</h2>
               <ul className="space-y-2 text-white/90">
-                <li><Link to="/account" className="block py-1 hover:text-shine-accent transition-colors">Your Account</Link></li>
-                <li><Link to="/orders" className="block py-1 hover:text-shine-accent transition-colors">Orders</Link></li>
-                <li><Link to="/tech" className="block py-1 hover:text-shine-accent transition-colors">Tech Stack</Link></li>
-                <li><Link to="/sign-in" className="block py-1 hover:text-shine-accent transition-colors">Sign In</Link></li>
+                {isAuthenticated_ ? (
+                  <>
+                    <li><Link to="/account" className="block py-1 hover:text-shine-accent transition-colors" onClick={() => setIsMenuOpen(false)}>Your Account</Link></li>
+                    <li><Link to="/orders" className="block py-1 hover:text-shine-accent transition-colors" onClick={() => setIsMenuOpen(false)}>Orders</Link></li>
+                    <li>
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-start p-0 text-white/90 hover:text-shine-accent"
+                        onClick={() => {
+                          handleLogout();
+                          setIsMenuOpen(false);
+                        }}
+                      >
+                        Sign Out
+                      </Button>
+                    </li>
+                  </>
+                ) : (
+                  <li>
+                    <Link 
+                      to="/login" 
+                      className="block py-1 hover:text-shine-accent transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Sign In
+                    </Link>
+                  </li>
+                )}
+                <li><Link to="/tech" className="block py-1 hover:text-shine-accent transition-colors" onClick={() => setIsMenuOpen(false)}>Tech Stack</Link></li>
               </ul>
             </div>
           </div>
